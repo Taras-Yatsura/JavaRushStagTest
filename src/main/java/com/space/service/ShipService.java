@@ -1,10 +1,12 @@
 package com.space.service;
 
 import com.space.controller.ShipOrder;
+import com.space.exception.BadRequestException;
+import com.space.exception.NotFoundException;
 import com.space.model.Ship;
 import com.space.model.ShipType;
+import com.space.repository.ShipRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,8 +20,11 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class ShipService {
-    @Autowired
-    CrudRepository repository;
+    ShipRepository repository;
+
+    public ShipService(@Autowired ShipRepository repository) {
+        this.repository = repository;
+    }
 
     public Ship createShip(Ship newShip)
     {
@@ -32,13 +37,13 @@ public class ShipService {
         if (newShip.getUsed() == null) newShip.setUsed(false);
         newShip.setRating(calculateRating(newShip.getUsed(), newShip.getProdDate(), newShip.getSpeed()));
 
-        return (Ship) repository.save(newShip);
+        return repository.save(newShip);
     }
 
     public Ship getShip(Long id)
     {
         checkId(id);
-        return (Ship) repository.findById(id).get();
+        return repository.findById(id).get();
     }
 
     public Ship updateShip(Long id, Ship newShip)
@@ -86,40 +91,6 @@ public class ShipService {
         }
 
         if (newIsUsed != null) oldShip.setUsed(newIsUsed);
-
-/*
-        if (!oldShip.getName().equals(newName)) {
-            checkStringParam(newName);
-            oldShip.setName(newName);
-        }
-
-        if (!oldShip.getPlanet().equals(newPlanet)) {
-            checkStringParam(newPlanet);
-            oldShip.setPlanet(newPlanet);
-        }
-
-        if (!oldShip.getShipType().equals(newShipType)) {
-            checkType(newShipType);
-            oldShip.setShipType(newShipType);
-        }
-
-        if (!oldShip.getProdDate().equals(newProdDate)) {
-            checkDate(newProdDate.getTime());
-            oldShip.setProdDate(newProdDate);
-        }
-
-        if (!oldShip.getSpeed().equals(newSpeed)) {
-            checkSpeed(newSpeed);
-            oldShip.setSpeed(newSpeed);
-        }
-
-        if (!oldShip.getCrewSize().equals(newCrewSize)) {
-            checkCrewSize(newCrewSize);
-            oldShip.setCrewSize(newCrewSize);
-        }
-
-        if (newIsUsed != null && !oldShip.getUsed().equals(newIsUsed)) oldShip.setUsed(newIsUsed);
-*/
 
         oldShip.setRating(calculateRating(oldShip.getUsed(), oldShip.getProdDate(), oldShip.getSpeed()));
 

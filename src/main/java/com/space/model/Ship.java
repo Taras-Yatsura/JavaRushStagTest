@@ -20,7 +20,6 @@ public class Ship
     @Enumerated(EnumType.STRING)
     private ShipType shipType;
 
-    //@Temporal(TemporalType.DATE)
     private Date prodDate;
     private Boolean isUsed;
     private Double speed;

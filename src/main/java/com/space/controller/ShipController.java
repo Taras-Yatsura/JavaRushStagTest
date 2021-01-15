@@ -10,8 +10,11 @@ import java.util.List;
 
 @RestController
 public class ShipController {
-    @Autowired
-    private ShipService service;
+    private final ShipService service;
+
+    public ShipController(@Autowired ShipService service) {
+        this.service = service;
+    }
 
     @GetMapping("/rest/ships")
     public List<Ship> getAll(
